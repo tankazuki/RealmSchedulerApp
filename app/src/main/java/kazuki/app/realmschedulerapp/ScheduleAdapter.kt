@@ -14,6 +14,11 @@ class ScheduleAdapter(data: OrderedRealmCollection<Schedule>): RealmRecyclerView
     init {
         setHasStableIds(true)
     }
+    private var listener : ((Long?) -> Unit)? = null
+
+    fun setOnItemClickListener( listener:(Long?) -> Unit ){
+       this.listener = listener
+    }
 
     class ViewHolder(cell: View) : RecyclerView.ViewHolder(cell) {
         val date: TextView = cell.findViewById(android.R.id.text1)
@@ -31,6 +36,9 @@ class ScheduleAdapter(data: OrderedRealmCollection<Schedule>): RealmRecyclerView
         val schedule: Schedule? = getItem(position)
         holder.date.text = DateFormat.format("yyyy/MM/dd", schedule?.date)
         holder.title.text = schedule?.title
+        holder.itemView.setOnClickListener {
+            listener?.invoke(schedule?.id)
+        }
     }
 
     override fun getItemId(position: Int): Long {
